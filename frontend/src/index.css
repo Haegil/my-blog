@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: var(--primary);
+  --color-brand-secondary: var(--secondary);
+  --color-brand-accent: var(--accent);
+  --color-brand-bg: var(--background);
+  --color-brand-surface: var(--surface);
+  --color-brand-border: var(--border);
+  --color-brand-text: var(--text-main);
+  --color-brand-muted: var(--text-muted);
+}
+
+@layer base {
+  :root {
+    --primary: #5F8D7A;
+    --secondary: #A7C4A0;
+    --accent: #7FA38D;
+    --background: #F4F7F4;
+    --surface: #ffffff;
+    --border: #D6E2DA;
+    --text-main: #1F2937;
+    --text-muted: #6B7280;
+  }
+
+  .dark {
+    --primary: #7FB69E;
+    --secondary: #1F2937;
+    --accent: #374151;
+    --background: #111827;
+    --surface: #1F2937;
+    --border: #374151;
+    --text-main: #F3F4F6;
+    --text-muted: #9CA3AF;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--text-main);
+    font-family: 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar to match theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+    opacity: 0.5;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+  }
+
+  /* Custom Markdown Styling */
+  .markdown-body {
+    line-height: 1.8;
+    font-size: 1.05rem;
+  }
+  .markdown-body h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-top: 2rem;
+    margin-bottom: 1.25rem;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.4rem;
+  }
+  .markdown-body h2 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin-top: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3rem;
+  }
+  .markdown-body h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+    color: var(--text-main);
+  }
+  .markdown-body p {
+    margin-bottom: 1.2rem;
+    color: var(--text-main);
+  }
+  .markdown-body ul, .markdown-body ol {
+    margin-bottom: 1.2rem;
+    padding-left: 1.75rem;
+  }
+  .markdown-body ul {
+    list-style-type: disc;
+  }
+  .markdown-body ol {
+    list-style-type: decimal;
+  }
+  .markdown-body li {
+    margin-bottom: 0.4rem;
+  }
+  .markdown-body pre {
+    background-color: #1e293b;
+    color: #f8fafc;
+    padding: 1.25rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .markdown-body code {
+    font-family: 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    background-color: rgba(95, 141, 122, 0.12);
+    color: var(--primary);
+    padding: 0.2rem 0.45rem;
+    border-radius: 6px;
+    font-size: 0.88em;
+  }
+  .markdown-body pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.92em;
+  }
+  .markdown-body blockquote {
+    border-left: 4px solid var(--primary);
+    background-color: rgba(95, 141, 122, 0.06);
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1.25rem;
+    border-radius: 0 8px 8px 0;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .markdown-body a {
+    color: var(--primary);
+    text-decoration: underline;
+    font-weight: 500;
+  }
+  .markdown-body a:hover {
+    color: var(--accent);
+  }
+  .markdown-body hr {
+    margin: 2rem 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+}
