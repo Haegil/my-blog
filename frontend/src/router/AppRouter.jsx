@@ -7,7 +7,7 @@ import PostDetail from '../pages/PostDetail';
 import WritePost from '../pages/WritePost';
 import EditPost from '../pages/EditPost';
 import Login from '../pages/Login';
-import TagPosts from '../pages/TagPosts';
+import Tags from '../pages/Tags';
 import SearchResults from '../pages/SearchResults';
 
 // PrivateRoute to protect write and edit pages
@@ -23,7 +23,8 @@ const AppRouter = () => {
       <Route path="/posts/all" element={<AllPosts />} />
       <Route path="/posts/:id" element={<PostDetail />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/tags/:name" element={<TagPosts />} />
+      <Route path="/tags" element={<Tags />} />
+      <Route path="/tags/:name" element={<Tags />} />
       <Route path="/search" element={<SearchResults />} />
       
       <Route 

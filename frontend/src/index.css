@@ -153,4 +153,76 @@
     border: 0;
     border-top: 1px solid var(--border);
   }
+
+  /* Real-time Syntax Highlighted Editor */
+  .hl-code-block-boundary {
+    color: #e5c07b;
+    font-weight: bold;
+  }
+  .hl-code-block-line {
+    color: #98c379;
+  }
+  .hl-header {
+    font-weight: bold;
+  }
+  .hl-header-1 {
+    color: #e06c75;
+    font-size: inherit;
+  }
+  .hl-header-2 {
+    color: #d19a66;
+    font-size: inherit;
+  }
+  .hl-header-3 {
+    color: #e5c07b;
+    font-size: inherit;
+  }
+  .hl-header-4 {
+    color: #61afef;
+    font-size: inherit;
+  }
+  .hl-header-5 {
+    color: #c678dd;
+    font-size: inherit;
+  }
+  .hl-header-6 {
+    color: #56b6c2;
+    font-size: inherit;
+  }
+  .hl-header-symbol {
+    color: #5c6370;
+  }
+  .hl-blockquote {
+    color: #5c6370;
+    font-style: italic;
+  }
+  .hl-blockquote-symbol {
+    color: #c678dd;
+  }
+  .hl-list-marker {
+    color: #61afef;
+    font-weight: bold;
+  }
+  .hl-inline-code {
+    color: #e06c75;
+  }
+  .hl-bold {
+    font-weight: bold;
+  }
+  .hl-italic {
+    font-style: italic;
+  }
+  .hl-link-text {
+    color: #61afef;
+    text-decoration: underline;
+  }
+  .hl-link-url {
+    color: #98c379;
+  }
+  .hl-hashtag {
+    color: #c678dd;
+    font-weight: bold;
+  }
 }
+
+

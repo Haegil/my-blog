@@ -21,7 +21,8 @@ import {
   Search, 
   Edit, 
   Logout, 
-  Login 
+  Login,
+  Tag
 } from '@mui/icons-material';
 
 const Navbar = () => {
@@ -33,6 +34,20 @@ const Navbar = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { query } = useSelector((state) => state.search);
   const [searchInput, setSearchInput] = useState(query);
+  const [tagCount, setTagCount] = useState(0);
+
+  // Fetch tag count whenever pathname changes (ensuring it's fresh)
+  useEffect(() => {
+    const fetchTagCount = async () => {
+      try {
+        const response = await client.get('/tags');
+        setTagCount(response.data.length);
+      } catch (err) {
+        console.error('Error fetching tag count in Navbar:', err);
+      }
+    };
+    fetchTagCount();
+  }, [location.pathname]);
 
   // Sync search input when search query changes globally (e.g. cleared on home page)
   useEffect(() => {
@@ -144,6 +159,46 @@ const Navbar = () => {
 
           {/* Controls */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Tag List Link (Responsive) */}
+            <Button
+              component={Link}
+              to="/tags"
+              variant="text"
+              startIcon={<Tag sx={{ fontSize: 16 }} />}
+              sx={{ 
+                display: { xs: 'none', sm: 'inline-flex' },
+                fontWeight: 600,
+                color: 'text.secondary',
+                mr: 1,
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.85rem',
+                borderRadius: '8px',
+                px: 1.5,
+                py: 0.5,
+                '&:hover': {
+                  color: 'primary.main',
+                  backgroundColor: isDark ? 'rgba(127, 182, 158, 0.08)' : 'rgba(95, 141, 122, 0.08)',
+                }
+              }}
+            >
+              {tagCount}개의 태그목록
+            </Button>
+            <IconButton
+              component={Link}
+              to="/tags"
+              color="inherit"
+              title={`${tagCount}개의 태그목록`}
+              sx={{
+                display: { xs: 'flex', sm: 'none' },
+                border: '1px solid',
+                borderColor: 'divider',
+                p: 1,
+                mr: 0.5
+              }}
+            >
+              <Tag fontSize="small" />
+            </IconButton>
+
             {/* Theme Toggle */}
             <IconButton 
               onClick={() => dispatch(toggleTheme())} 
