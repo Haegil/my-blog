@@ -116,7 +116,7 @@ const EditPost = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Container maxWidth="md" sx={{ py: 6 }}>
         <Skeleton variant="text" width={200} height={40} sx={{ mb: 2 }} />
         <Skeleton variant="rectangular" width="100%" height={400} sx={{ borderRadius: '16px' }} />
       </Container>
@@ -124,7 +124,7 @@ const EditPost = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
+    <Container maxWidth="md" sx={{ py: 6 }}>
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, fontFamily: 'Outfit, sans-serif' }}>

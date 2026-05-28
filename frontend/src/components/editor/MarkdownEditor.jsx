@@ -157,6 +157,7 @@ const MarkdownEditor = ({ value, onChange, title, onTitleChange, tags, onTagsCha
         value={title}
         onChange={(e) => onTitleChange(e.target.value)}
         InputProps={{
+          readOnly: isPreviewMode,
           style: { 
             fontSize: '1.5rem', 
             fontWeight: 700,
@@ -173,6 +174,9 @@ const MarkdownEditor = ({ value, onChange, title, onTitleChange, tags, onTagsCha
         placeholder="태그들을 쉼표로 구분해서 적어주세요"
         value={tags}
         onChange={(e) => onTagsChange(e.target.value)}
+        InputProps={{
+          readOnly: isPreviewMode
+        }}
       />
 
       {/* Editor Panel */}
@@ -251,7 +255,7 @@ const MarkdownEditor = ({ value, onChange, title, onTitleChange, tags, onTagsCha
                 pointerEvents: 'none',
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
-                fontFamily: "'Fira Code', 'Courier New', Courier, monospace",
+                fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace",
                 fontSize: '0.95rem',
                 lineHeight: 1.65,
                 backgroundColor: 'transparent',
@@ -262,9 +266,11 @@ const MarkdownEditor = ({ value, onChange, title, onTitleChange, tags, onTagsCha
             {/* The transparent text area overlaid on top */}
             <textarea
               ref={textareaRef}
+              className="markdown-editor-textarea"
               value={value}
               onChange={(e) => onChange(e.target.value)}
               onScroll={handleScroll}
+              readOnly={isPreviewMode}
               placeholder="여기에 마크다운 문법으로 기록을 시작하세요..."
               style={{
                 position: 'absolute',
@@ -280,7 +286,7 @@ const MarkdownEditor = ({ value, onChange, title, onTitleChange, tags, onTagsCha
                 overflow: 'auto',
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
-                fontFamily: "'Fira Code', 'Courier New', Courier, monospace",
+                fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace",
                 fontSize: '0.95rem',
                 lineHeight: 1.65,
                 backgroundColor: 'transparent',

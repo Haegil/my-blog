@@ -115,10 +115,14 @@ const Navbar = () => {
               fontFamily: 'Outfit, Inter, sans-serif',
               display: 'flex',
               alignItems: 'center',
-              gap: 1
+              fontSize: { xs: '1.25rem', sm: '1.5rem' }
             }}
           >
-            🌿 MemoStack
+            <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+              🌿 
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' }, ml: 0.5 }}>MemoStack</Box>
+              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' }, ml: 0.5 }}>Memo</Box>
+            </Box>
           </Typography>
 
           {/* Search Bar */}
@@ -130,9 +134,11 @@ const Navbar = () => {
               alignItems: 'center', 
               backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)',
               borderRadius: '999px',
-              px: 2.5,
-              py: 0.75,
-              width: { xs: '45%', sm: '380px' },
+              px: { xs: 1.5, sm: 2.5 },
+              py: 0.5,
+              flexGrow: 1,
+              maxWidth: { xs: '160px', sm: '320px', md: '380px' },
+              mx: { xs: 1, sm: 2 },
               border: '1.5px solid transparent',
               transition: 'all 0.2s ease-in-out',
               '&:focus-within': {
@@ -143,14 +149,14 @@ const Navbar = () => {
               }
             }}
           >
-            <Search sx={{ color: 'text.secondary', mr: 1, fontSize: 20 }} />
+            <Search sx={{ color: 'text.secondary', mr: 0.5, fontSize: { xs: 18, sm: 20 } }} />
             <InputBase
-              placeholder="제목, 본문, 태그 검색..."
+              placeholder="검색..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               sx={{ 
                 color: 'text.primary', 
-                fontSize: '0.9rem',
+                fontSize: { xs: '0.8rem', sm: '0.9rem' },
                 width: '100%',
                 fontFamily: 'Inter, sans-serif'
               }}
@@ -158,7 +164,7 @@ const Navbar = () => {
           </Box>
 
           {/* Controls */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
             {/* Tag List Link (Responsive) */}
             <Button
               component={Link}
@@ -192,8 +198,8 @@ const Navbar = () => {
                 display: { xs: 'flex', sm: 'none' },
                 border: '1px solid',
                 borderColor: 'divider',
-                p: 1,
-                mr: 0.5
+                p: { xs: 0.75, sm: 1 },
+                mr: { xs: 0.25, sm: 0.5 }
               }}
             >
               <Tag fontSize="small" />
@@ -206,10 +212,10 @@ const Navbar = () => {
               sx={{ 
                 border: '1px solid',
                 borderColor: 'divider',
-                p: 1,
+                p: { xs: 0.75, sm: 1 },
               }}
             >
-              {isDark ? <LightMode sx={{ color: '#FCD34D' }} /> : <DarkMode sx={{ color: '#4B5563' }} />}
+              {isDark ? <LightMode sx={{ color: '#FCD34D', fontSize: { xs: 20, sm: 24 } }} /> : <DarkMode sx={{ color: '#4B5563', fontSize: { xs: 20, sm: 24 } }} />}
             </IconButton>
 
             {/* Auth Actions */}
@@ -235,9 +241,10 @@ const Navbar = () => {
                     display: { xs: 'flex', sm: 'none' },
                     border: '1px solid',
                     borderColor: 'divider',
+                    p: { xs: 0.75, sm: 1 }
                   }}
                 >
-                  <Edit />
+                  <Edit fontSize="small" />
                 </IconButton>
 
                 <IconButton 
@@ -247,9 +254,10 @@ const Navbar = () => {
                   sx={{ 
                     border: '1px solid',
                     borderColor: 'divider',
+                    p: { xs: 0.75, sm: 1 }
                   }}
                 >
-                  <Logout />
+                  <Logout fontSize="small" />
                 </IconButton>
               </>
             ) : (
@@ -261,6 +269,9 @@ const Navbar = () => {
                 sx={{ 
                   borderRadius: '999px',
                   borderWidth: '1.5px',
+                  px: { xs: 1.5, sm: 2.5 },
+                  py: { xs: 0.5, sm: 0.75 },
+                  fontSize: { xs: '0.75rem', sm: '0.85rem' },
                   '&:hover': {
                     borderWidth: '1.5px',
                   }

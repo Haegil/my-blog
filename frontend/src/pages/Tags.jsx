@@ -75,23 +75,31 @@ const Tags = () => {
   const activeTagName = name || (tags.length > 0 ? tags[0].name : '');
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
+    <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
       {/* Back Button */}
       <Button 
         component={Link} 
         to="/" 
         startIcon={<ArrowBack />} 
-        sx={{ mb: 4, color: 'text.secondary' }}
+        sx={{ mb: { xs: 2, md: 4 }, color: 'text.secondary', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
       >
         홈으로 돌아가기
       </Button>
 
       {/* Header */}
-      <Box sx={{ mb: 5 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, fontFamily: 'Outfit, sans-serif' }}>
+      <Box sx={{ mb: { xs: 3, md: 5 } }}>
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            fontSize: { xs: '1.6rem', sm: '2.125rem' }, 
+            fontWeight: 800, 
+            mb: 0.5, 
+            fontFamily: 'Outfit, sans-serif' 
+          }}
+        >
           태그별 기록 탐색 🏷️
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
           관심 있는 태그를 선택하여 관련 지식과 경험들을 모아보세요.
         </Typography>
       </Box>
@@ -101,73 +109,136 @@ const Tags = () => {
       <Grid container spacing={4}>
         {/* Left Column: Tags List */}
         <Grid item xs={12} md={4}>
-          <Card sx={{ position: 'sticky', top: 96, maxHeight: 'calc(100vh - 160px)', overflowY: 'auto' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, fontFamily: 'Outfit, sans-serif', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Card 
+            sx={{ 
+              position: { md: 'sticky' }, 
+              top: 96, 
+              maxHeight: { xs: '260px', md: 'calc(100vh - 160px)' }, 
+              overflowY: 'auto' 
+            }}
+          >
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: 1.5, 
+                  fontFamily: 'Outfit, sans-serif', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 1,
+                  fontSize: { xs: '0.95rem', sm: '1.1rem' }
+                }}
+              >
                 <TagIcon fontSize="small" color="primary" /> 모든 태그 ({tags.length})
               </Typography>
               
               {loadingTags ? (
-                <SkeletonList count={5} />
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Chip label="Loading..." size="small" disabled sx={{ borderRadius: '8px' }} />
+                  <Chip label="Loading..." size="small" disabled sx={{ borderRadius: '8px' }} />
+                  <Chip label="Loading..." size="small" disabled sx={{ borderRadius: '8px' }} />
+                </Box>
               ) : tags.length > 0 ? (
-                <List component="nav" sx={{ p: 0 }}>
-                  {tags.map((tag) => {
-                    const isActive = tag.name.toLowerCase() === activeTagName.toLowerCase();
-                    return (
-                      <ListItemButton
-                        key={tag.id}
-                        component={Link}
-                        to={`/tags/${encodeURIComponent(tag.name)}`}
-                        selected={isActive}
-                        sx={{
-                          borderRadius: '12px',
-                          mb: 1,
-                          transition: 'all 0.2s ease',
-                          py: 1.5,
-                          px: 2,
-                          '&.Mui-selected': {
-                            backgroundColor: 'primary.main',
-                            color: '#ffffff',
-                            '&:hover': {
-                              backgroundColor: 'primary.dark',
-                            },
-                            '& .MuiChip-root': {
-                              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                              color: '#ffffff',
-                              borderColor: 'transparent'
-                            }
-                          },
-                          '&:hover': {
-                            transform: 'translateX(4px)',
-                            backgroundColor: isActive ? 'primary.main' : 'rgba(95, 141, 122, 0.08)',
-                          }
-                        }}
-                      >
-                        <ListItemText 
-                          primary={`#${tag.name}`} 
-                          primaryTypographyProps={{ 
-                            fontWeight: isActive ? 700 : 500,
+                <>
+                  {/* Mobile View: Flexible Chips list that wraps horizontally */}
+                  <Box 
+                    sx={{ 
+                      display: { xs: 'flex', md: 'none' }, 
+                      flexWrap: 'wrap', 
+                      gap: 0.75, 
+                      pb: 0.5 
+                    }}
+                  >
+                    {tags.map((tag) => {
+                      const isActive = tag.name.toLowerCase() === activeTagName.toLowerCase();
+                      return (
+                        <Chip
+                          key={tag.id}
+                          label={`#${tag.name} (${tag.count})`}
+                          component={Link}
+                          to={`/tags/${encodeURIComponent(tag.name)}`}
+                          clickable
+                          color={isActive ? "primary" : "default"}
+                          variant={isActive ? "filled" : "outlined"}
+                          sx={{
                             fontFamily: 'Inter, sans-serif',
-                            fontSize: '0.95rem'
-                          }} 
-                        />
-                        <Chip 
-                          label={tag.count} 
-                          size="small" 
-                          variant="outlined"
-                          sx={{ 
-                            fontWeight: 600, 
-                            fontSize: '0.75rem',
+                            fontWeight: isActive ? 700 : 500,
+                            fontSize: '0.78rem',
+                            borderRadius: '8px',
+                            px: 0.5,
+                            py: 1.25,
                             borderColor: isActive ? 'transparent' : 'divider',
-                            color: isActive ? 'inherit' : 'text.secondary'
-                          }} 
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              backgroundColor: isActive ? 'primary.main' : 'rgba(95, 141, 122, 0.08)',
+                            }
+                          }}
                         />
-                      </ListItemButton>
-                    );
-                  })}
-                </List>
+                      );
+                    })}
+                  </Box>
+
+                  {/* Desktop View: List panel */}
+                  <List component="nav" sx={{ display: { xs: 'none', md: 'block' }, p: 0 }}>
+                    {tags.map((tag) => {
+                      const isActive = tag.name.toLowerCase() === activeTagName.toLowerCase();
+                      return (
+                        <ListItemButton
+                          key={tag.id}
+                          component={Link}
+                          to={`/tags/${encodeURIComponent(tag.name)}`}
+                          selected={isActive}
+                          sx={{
+                            borderRadius: '12px',
+                            mb: 1,
+                            transition: 'all 0.2s ease',
+                            py: 1.5,
+                            px: 2,
+                            '&.Mui-selected': {
+                              backgroundColor: 'primary.main',
+                              color: '#ffffff',
+                              '&:hover': {
+                                backgroundColor: 'primary.dark',
+                              },
+                              '& .MuiChip-root': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                color: '#ffffff',
+                                borderColor: 'transparent'
+                              }
+                            },
+                            '&:hover': {
+                              transform: 'translateX(4px)',
+                              backgroundColor: isActive ? 'primary.main' : 'rgba(95, 141, 122, 0.08)',
+                            }
+                          }}
+                        >
+                          <ListItemText 
+                            primary={`#${tag.name}`} 
+                            primaryTypographyProps={{ 
+                              fontWeight: isActive ? 700 : 500,
+                              fontFamily: 'Inter, sans-serif',
+                              fontSize: '0.95rem'
+                            }} 
+                          />
+                          <Chip 
+                            label={tag.count} 
+                            size="small" 
+                            variant="outlined"
+                            sx={{ 
+                              fontWeight: 600, 
+                              fontSize: '0.75rem',
+                              borderColor: isActive ? 'transparent' : 'divider',
+                              color: isActive ? 'inherit' : 'text.secondary'
+                            }} 
+                          />
+                        </ListItemButton>
+                      );
+                    })}
+                  </List>
+                </>
               ) : (
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.85rem' }}>
                   아직 등록된 태그가 없습니다.
                 </Typography>
               )}
@@ -175,16 +246,24 @@ const Tags = () => {
           </Card>
         </Grid>
 
-        {/* Right Column: Selected Tag's Posts */}
+          {/* Right Column: Selected Tag's Posts */}
         <Grid item xs={12} md={8}>
           {activeTagName ? (
-            <Box>
-              <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ mt: { xs: 1, md: 0 } }}>
+              <Box sx={{ mb: { xs: 2, sm: 4 }, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box>
-                  <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, fontFamily: 'Outfit, sans-serif' }}>
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      fontWeight: 800, 
+                      mb: 0.5, 
+                      fontFamily: 'Outfit, sans-serif',
+                      fontSize: { xs: '1.25rem', sm: '1.5rem' }
+                    }}
+                  >
                     #{activeTagName}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
                     이 태그가 포함된 기록들입니다. 총 {loadingPosts ? '-' : posts.length}개의 글이 검색되었습니다.
                   </Typography>
                 </Box>

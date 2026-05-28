@@ -52,13 +52,13 @@ const AllPosts = () => {
   const totalPages = Math.ceil(totalCount / limit);
 
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
+    <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
       {/* Back Button */}
       <Button 
         component={Link} 
         to="/" 
         startIcon={<ArrowBack />} 
-        sx={{ mb: 4, color: 'text.secondary' }}
+        sx={{ mb: { xs: 2, md: 4 }, color: 'text.secondary', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
       >
         홈으로 돌아가기
       </Button>
@@ -74,38 +74,46 @@ const AllPosts = () => {
           borderRadius: '16px'
         }}
       >
-        <CardContent sx={{ p: 4, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 3 }}>
+        <CardContent sx={{ p: { xs: 2.5, sm: 4 }, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 3 }}>
           <Box sx={{ maxWidth: { xs: '100%', sm: '60%' } }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, fontFamily: 'Outfit, sans-serif' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, fontFamily: 'Outfit, sans-serif', fontSize: { xs: '0.95rem', sm: '1.25rem' } }}>
               💡 MemoStack Stats
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
               기록하는 습관이 지식을 내재화합니다. 배움과 문제 해결 과정을 실시간으로 보관하세요.
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', gap: 5 }}>
+          <Box sx={{ display: 'flex', gap: { xs: 3, sm: 5 } }}>
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h3" sx={{ fontWeight: 800, color: 'primary.main' }}>
+              <Typography variant="h3" sx={{ fontWeight: 800, color: 'primary.main', fontSize: { xs: '1.75rem', sm: '3rem' } }}>
                 {loading ? '-' : totalCount}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>총 게시글</Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>총 게시글</Typography>
             </Box>
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h3" sx={{ fontWeight: 800, color: 'primary.main' }}>
+              <Typography variant="h3" sx={{ fontWeight: 800, color: 'primary.main', fontSize: { xs: '1.75rem', sm: '3rem' } }}>
                 {loading ? '-' : tagsCount}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>사용된 태그</Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>사용된 태그</Typography>
             </Box>
           </Box>
         </CardContent>
       </Card>
 
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, fontFamily: 'Outfit, sans-serif' }}>
+      <Box sx={{ mb: { xs: 3, md: 4 } }}>
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            fontSize: { xs: '1.6rem', sm: '2.125rem' }, 
+            fontWeight: 800, 
+            mb: 1, 
+            fontFamily: 'Outfit, sans-serif' 
+          }}
+        >
           전체 기록 목록 📝
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
           작성된 모든 지식 카드의 히스토리입니다.
         </Typography>
       </Box>
@@ -129,11 +137,13 @@ const AllPosts = () => {
                 page={page} 
                 onChange={handlePageChange} 
                 color="primary"
-                size="large"
                 sx={{
                   '& .MuiPaginationItem-root': {
                     fontFamily: 'Inter, sans-serif',
-                    fontWeight: 600
+                    fontWeight: 600,
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    minWidth: { xs: '28px', sm: '40px' },
+                    height: { xs: '28px', sm: '40px' }
                   }
                 }}
               />

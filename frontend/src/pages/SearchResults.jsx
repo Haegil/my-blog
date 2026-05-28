@@ -69,24 +69,40 @@ const SearchResults = () => {
   const totalPages = Math.ceil(totalCount / limit);
 
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
+    <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
       {/* Back Button */}
       <Button 
         component={Link} 
         to="/" 
         startIcon={<ArrowBack />} 
-        sx={{ mb: 4, color: 'text.secondary' }}
+        sx={{ mb: { xs: 2, md: 4 }, color: 'text.secondary', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
       >
         홈으로 돌아가기
       </Button>
 
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, fontFamily: 'Outfit, sans-serif' }}>
-          '{query}' 검색 결과 🔍
+      <Box sx={{ mb: { xs: 3, md: 4 } }}>
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            fontSize: { xs: '1.6rem', sm: '2.125rem' }, 
+            fontWeight: 800, 
+            mb: 1, 
+            fontFamily: 'Outfit, sans-serif' 
+          }}
+        >
+          {query.trim().startsWith('#') ? (
+            <>태그 <span style={{ color: 'var(--primary)' }}>{query}</span> 검색 결과 🏷️</>
+          ) : (
+            <>&apos;{query}&apos; 검색 결과 🔍</>
+          )}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          제목, 본문 내용 및 태그 중에서 검색어와 일치하는 기록들입니다. 총 {loading ? '-' : totalCount}개의 기록을 찾았습니다.
+        <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
+          {query.trim().startsWith('#') ? (
+            <>해당 태그를 가진 기록들입니다. 총 {loading ? '-' : totalCount}개의 기록을 찾았습니다.</>
+          ) : (
+            <>제목, 본문 내용 및 태그 중에서 검색어와 일치하는 기록들입니다. 총 {loading ? '-' : totalCount}개의 기록을 찾았습니다.</>
+          )}
         </Typography>
       </Box>
 
@@ -114,11 +130,13 @@ const SearchResults = () => {
                 page={page} 
                 onChange={handlePageChange} 
                 color="primary"
-                size="large"
                 sx={{
                   '& .MuiPaginationItem-root': {
                     fontFamily: 'Inter, sans-serif',
-                    fontWeight: 600
+                    fontWeight: 600,
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    minWidth: { xs: '28px', sm: '40px' },
+                    height: { xs: '28px', sm: '40px' }
                   }
                 }}
               />
