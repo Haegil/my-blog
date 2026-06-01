@@ -1,27 +1,48 @@
-const oracledb = require('oracledb');
+const { Pool } = require('pg');
 require('dotenv').config();
-
-// Global config for oracledb
-oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
-oracledb.fetchAsString = [oracledb.CLOB];
 
 let pool;
 
 async function initializePool() {
   try {
-    pool = await oracledb.createPool({
-      user: process.env.ORACLE_USER,
-      password: process.env.ORACLE_PASSWORD,
-      connectString: process.env.ORACLE_CONNECTION_STRING,
-      poolMin: 2,
-      poolMax: 10,
-      poolIncrement: 1,
-      poolTimeout: 60
-    });
-    console.log('Oracle Database connection pool initialized successfully.');
+    const config = {
+      connectionString: process.env.DATABASE_URL,
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 5000,
+    };
+
+    // If DATABASE_URL is not set, use separate config for local fallback
+    if (!config.connectionString) {
+      config.user = process.env.PGUSER || 'postgres';
+      config.host = process.env.PGHOST || 'localhost';
+      config.database = process.env.PGDATABASE || 'my_blog';
+      config.password = process.env.PGPASSWORD || 'postgres';
+      config.port = parseInt(process.env.PGPORT || '5432', 10);
+    } else {
+      // In production (Vercel/Render/Supabase), enable SSL rejectUnauthorized: false
+      if (
+        config.connectionString.includes('supabase') ||
+        config.connectionString.includes('render') ||
+        config.connectionString.includes('aiven') ||
+        config.connectionString.includes('neon') ||
+        process.env.NODE_ENV === 'production'
+      ) {
+        config.ssl = {
+          rejectUnauthorized: false
+        };
+      }
+    }
+
+    pool = new Pool(config);
+
+    // Test connection
+    const client = await pool.connect();
+    console.log('PostgreSQL Database connection pool initialized successfully.');
+    client.release();
     return pool;
   } catch (err) {
-    console.error('Error initializing Oracle DB connection pool:', err);
+    console.error('Error initializing PostgreSQL DB connection pool:', err);
     throw err;
   }
 }
@@ -29,11 +50,11 @@ async function initializePool() {
 async function closePool() {
   try {
     if (pool) {
-      await pool.close();
-      console.log('Oracle Database connection pool closed.');
+      await pool.end();
+      console.log('PostgreSQL Database connection pool closed.');
     }
   } catch (err) {
-    console.error('Error closing Oracle DB connection pool:', err);
+    console.error('Error closing PostgreSQL DB connection pool:', err);
   }
 }
 
@@ -47,23 +68,13 @@ function getPool() {
 /**
  * Helper to execute a single query (auto-releases connection)
  */
-async function execute(sql, binds = {}, options = {}) {
-  let connection;
+async function execute(sql, params = []) {
   try {
-    connection = await getPool().getConnection();
-    const result = await connection.execute(sql, binds, options);
+    const result = await getPool().query(sql, params);
     return result;
   } catch (err) {
     console.error(`Database Execution Error for SQL: ${sql}`, err);
     throw err;
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (closeErr) {
-        console.error('Error closing connection:', closeErr);
-      }
-    }
   }
 }
 
@@ -72,30 +83,23 @@ async function execute(sql, binds = {}, options = {}) {
  * @param {Function} callback - (connection) => Promise
  */
 async function executeTransaction(callback) {
-  let connection;
+  const client = await getPool().connect();
   try {
-    connection = await getPool().getConnection();
-    const result = await callback(connection);
-    await connection.commit();
+    // Add compatibility method for repositories using transaction connection
+    client.execute = function(sql, params = []) {
+      return this.query(sql, params);
+    };
+
+    await client.query('BEGIN');
+    const result = await callback(client);
+    await client.query('COMMIT');
     return result;
   } catch (err) {
-    if (connection) {
-      try {
-        await connection.rollback();
-      } catch (rollbackErr) {
-        console.error('Error rolling back transaction:', rollbackErr);
-      }
-    }
+    await client.query('ROLLBACK');
     console.error('Transaction rolled back due to error:', err);
     throw err;
   } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (closeErr) {
-        console.error('Error closing transaction connection:', closeErr);
-      }
-    }
+    client.release();
   }
 }
 

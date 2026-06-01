@@ -1,10 +1,9 @@
 const db = require('../config/db');
-const oracledb = require('oracledb');
 
 class TagRepository {
   async findByName(name) {
-    const sql = `SELECT id, name FROM tags WHERE name = :name`;
-    const result = await db.execute(sql, { name });
+    const sql = `SELECT id, name FROM tags WHERE name = $1`;
+    const result = await db.execute(sql, [name]);
     if (result.rows && result.rows.length > 0) {
       const row = result.rows[0];
       return { 
@@ -18,21 +17,20 @@ class TagRepository {
   async create(name, connection = null) {
     const sql = `
       INSERT INTO tags (name)
-      VALUES (:name)
-      RETURNING id INTO :id
+      VALUES ($1)
+      RETURNING id
     `;
-    const binds = {
-      name,
-      id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
-    };
+    const params = [name];
 
     let result;
     if (connection) {
-      result = await connection.execute(sql, binds);
+      result = await connection.execute(sql, params);
     } else {
-      result = await db.execute(sql, binds, { autoCommit: true });
+      result = await db.execute(sql, params);
     }
-    return result.outBinds.id[0];
+    
+    const row = result.rows[0];
+    return row.ID || row.id;
   }
 
   async findByPostId(postId) {
@@ -40,10 +38,10 @@ class TagRepository {
       SELECT t.id, t.name
       FROM tags t
       JOIN post_tags pt ON t.id = pt.tag_id
-      WHERE pt.post_id = :postId
+      WHERE pt.post_id = $1
       ORDER BY t.name ASC
     `;
-    const result = await db.execute(sql, { postId });
+    const result = await db.execute(sql, [postId]);
     return result.rows.map(row => ({
       id: row.ID || row.id,
       name: row.NAME || row.name
@@ -62,7 +60,7 @@ class TagRepository {
     return result.rows.map(row => ({
       id: row.ID || row.id,
       name: row.NAME || row.name,
-      count: Number(row.CNT || row.cnt || 0)
+      count: Number(row.CNT || row.cnt || row.count || 0)
     }));
   }
 
@@ -74,7 +72,7 @@ class TagRepository {
     if (connection) {
       await connection.execute(sql);
     } else {
-      await db.execute(sql, {}, { autoCommit: true });
+      await db.execute(sql);
     }
   }
 }

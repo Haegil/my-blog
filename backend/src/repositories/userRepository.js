@@ -1,14 +1,13 @@
 const db = require('../config/db');
-const oracledb = require('oracledb');
 
 class UserRepository {
   async findByUsername(username) {
     const sql = `
       SELECT id, username, password, created_at
       FROM memo_stack_users
-      WHERE username = :username
+      WHERE username = $1
     `;
-    const result = await db.execute(sql, { username });
+    const result = await db.execute(sql, [username]);
     if (result.rows && result.rows.length > 0) {
       const row = result.rows[0];
       return {
@@ -24,24 +23,21 @@ class UserRepository {
   async create(username, hashedPassword, connection = null) {
     const sql = `
       INSERT INTO memo_stack_users (username, password)
-      VALUES (:username, :password)
-      RETURNING id INTO :id
+      VALUES ($1, $2)
+      RETURNING id
     `;
     
-    const binds = {
-      username,
-      password: hashedPassword,
-      id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
-    };
+    const params = [username, hashedPassword];
 
     let result;
     if (connection) {
-      result = await connection.execute(sql, binds);
+      result = await connection.execute(sql, params);
     } else {
-      result = await db.execute(sql, binds, { autoCommit: true });
+      result = await db.execute(sql, params);
     }
 
-    const newId = result.outBinds.id[0];
+    const row = result.rows[0];
+    const newId = row.ID || row.id;
     return newId;
   }
 
@@ -50,7 +46,8 @@ class UserRepository {
     const result = await db.execute(sql);
     if (result.rows && result.rows.length > 0) {
       const row = result.rows[0];
-      return row.CNT || row.cnt || 0;
+      const countVal = row.CNT || row.cnt || row.count || 0;
+      return Number(countVal);
     }
     return 0;
   }
