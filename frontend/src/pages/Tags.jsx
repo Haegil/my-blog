@@ -113,7 +113,7 @@ const Tags = () => {
             sx={{ 
               position: { md: 'sticky' }, 
               top: 96, 
-              maxHeight: { xs: '260px', md: 'calc(100vh - 160px)' }, 
+              maxHeight: { xs: '200px', md: 'calc(100vh - 160px)' }, 
               overflowY: 'auto' 
             }}
           >
@@ -141,13 +141,12 @@ const Tags = () => {
                 </Box>
               ) : tags.length > 0 ? (
                 <>
-                  {/* Mobile View: Flexible Chips list that wraps horizontally */}
+                  {/* Mobile View: 2-column grid to fill width and reduce whitespace */}
                   <Box 
                     sx={{ 
-                      display: { xs: 'flex', md: 'none' }, 
-                      flexWrap: 'wrap', 
-                      gap: 0.75, 
-                      pb: 0.5 
+                      display: { xs: 'grid', md: 'none' }, 
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: 0.5,
                     }}
                   >
                     {tags.map((tag) => {
@@ -164,12 +163,18 @@ const Tags = () => {
                           sx={{
                             fontFamily: 'Inter, sans-serif',
                             fontWeight: isActive ? 700 : 500,
-                            fontSize: '0.78rem',
+                            fontSize: '0.75rem',
                             borderRadius: '8px',
-                            px: 0.5,
-                            py: 1.25,
+                            height: '28px',
+                            width: '100%',
                             borderColor: isActive ? 'transparent' : 'divider',
                             transition: 'all 0.2s ease',
+                            '& .MuiChip-label': {
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              px: 1,
+                            },
                             '&:hover': {
                               backgroundColor: isActive ? 'primary.main' : 'rgba(95, 141, 122, 0.08)',
                             }
