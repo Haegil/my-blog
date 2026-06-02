@@ -15,11 +15,28 @@ const tagRoutes = require('./routes/tagRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy for secure cookies in production (behind Render/Vercel proxies)
+app.set('trust proxy', 1);
+
 // Session 전용 독립 Pool (db.initializePool() 실행 전에도 사용 가능)
-const sessionPool = new Pool({
+const sessionPoolConfig = {
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : undefined,
-});
+  max: 5,
+};
+
+if (!sessionPoolConfig.connectionString) {
+  sessionPoolConfig.user = process.env.PGUSER || 'postgres';
+  sessionPoolConfig.host = process.env.PGHOST || 'localhost';
+  sessionPoolConfig.database = process.env.PGDATABASE || 'my_blog';
+  sessionPoolConfig.password = process.env.PGPASSWORD || 'postgres';
+  sessionPoolConfig.port = parseInt(process.env.PGPORT || '5432', 10);
+} else {
+  if (process.env.NODE_ENV === 'production' || sessionPoolConfig.connectionString.includes('render') || sessionPoolConfig.connectionString.includes('supabase')) {
+    sessionPoolConfig.ssl = { rejectUnauthorized: false };
+  }
+}
+
+const sessionPool = new Pool(sessionPoolConfig);
 
 // Set up CORS
 app.use(cors({

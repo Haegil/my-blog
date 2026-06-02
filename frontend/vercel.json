@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://my-blog-48fe.onrender.com/api/:path*"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
     }
   ]
 }
