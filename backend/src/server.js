@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
 require('dotenv').config();
 
 const db = require('./config/db');
@@ -25,14 +26,19 @@ app.use(express.urlencoded({ extended: true }));
 
 // Express Session configuration
 app.use(session({
+  store: new pgSession({
+    pool: db.getPool(),          // 기존 PostgreSQL 커넥션 풀 재사용
+    tableName: 'user_sessions',  // 세션 저장 테이블 (자동 생성)
+    createTableIfMissing: true,
+  }),
   secret: process.env.SESSION_SECRET || 'memostack-default-secret-key-12345!',
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: false, // Set to true when running over HTTPS in production
+    secure: process.env.NODE_ENV === 'production', // 프로덕션(HTTPS)에서만 true
     maxAge: 1000 * 60 * 60 * 24, // 24 hours
-    sameSite: 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // 크로스 도메인(Vercel↔Render) 허용
   }
 }));
 
