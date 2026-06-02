@@ -101,7 +101,18 @@ const highlightMarkdown = (text) => {
       const rest = listMatch[3];
       return `${indent}<span class="hl-list-marker">${marker}</span>${highlightInlineStyles(rest)}`;
     }
-    
+
+    // Table separator row: |---|---|---|
+    if (/^\|([\s]*:?-+:?[\s]*\|)+$/.test(escapedLine)) {
+      return `<span class="hl-table-separator">${escapedLine}</span>`;
+    }
+
+    // Table row: | cell | cell |
+    if (escapedLine.startsWith('|') && escapedLine.endsWith('|')) {
+      const highlighted = escapedLine.replace(/\|/g, '<span class="hl-table-pipe">|</span>');
+      return `<span class="hl-table-row">${highlighted}</span>`;
+    }
+
     // Regular line
     return highlightInlineStyles(escapedLine);
   });

@@ -153,6 +153,39 @@
     border: 0;
     border-top: 1px solid var(--border);
   }
+  /* Table styles for markdown preview */
+  .markdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .markdown-body thead tr {
+    background-color: rgba(95, 141, 122, 0.12);
+  }
+  .markdown-body th {
+    padding: 0.65rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    color: var(--text-main);
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  .markdown-body td {
+    padding: 0.6rem 1rem;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .markdown-body tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .markdown-body tbody tr:hover {
+    background-color: rgba(95, 141, 122, 0.05);
+  }
 
   /* Real-time Syntax Highlighted Editor */
   .hl-code-block-boundary {
@@ -239,6 +272,19 @@
     background-color: rgba(198, 120, 221, 0.08);
     border-radius: 4px;
     padding: 0 2px;
+  }
+  /* Table syntax highlighting in editor */
+  .hl-table-row {
+    color: #abb2bf;
+  }
+  .hl-table-pipe {
+    color: #56b6c2;
+    font-weight: bold;
+    opacity: 0.9;
+  }
+  .hl-table-separator {
+    color: #5c6370;
+    opacity: 0.7;
   }
 
   /* Alignment for Markdown Editor textarea and pre */
