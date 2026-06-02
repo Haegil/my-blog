@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
+const { Pool } = require('pg');
 require('dotenv').config();
 
 const db = require('./config/db');
@@ -13,6 +14,12 @@ const tagRoutes = require('./routes/tagRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Session 전용 독립 Pool (db.initializePool() 실행 전에도 사용 가능)
+const sessionPool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : undefined,
+});
 
 // Set up CORS
 app.use(cors({
@@ -27,7 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 // Express Session configuration
 app.use(session({
   store: new pgSession({
-    pool: db.getPool(),          // 기존 PostgreSQL 커넥션 풀 재사용
+    pool: sessionPool,           // 세션 전용 독립 Pool 사용
     tableName: 'user_sessions',  // 세션 저장 테이블 (자동 생성)
     createTableIfMissing: true,
   }),
