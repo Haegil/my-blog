@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../store/themeSlice';
@@ -36,8 +36,11 @@ const NavIconBtn = ({ icon, label, onClick, href, iconColor, isDark, sx = {} }) 
     textDecoration: 'none',
     border: '1px solid',
     borderColor: 'divider',
-    borderRadius: '8px',
+    borderRadius: '6px',
     p: { xs: 0.75, sm: 1 },
+    width: { xs: 34, sm: 40 },
+    minWidth: { xs: 34, sm: 40 },
+    height: { xs: 34, sm: 40 },
     cursor: 'pointer',
     background: 'none',
     color: 'text.secondary',
@@ -46,6 +49,7 @@ const NavIconBtn = ({ icon, label, onClick, href, iconColor, isDark, sx = {} }) 
     // 데스크톱에서만 hover 애니메이션
     '@media (min-width: 600px)': {
       '&:hover': {
+        width: '128px',
         color: iconColor || 'primary.main',
         backgroundColor: isDark ? 'rgba(127, 182, 158, 0.08)' : 'rgba(95, 141, 122, 0.08)',
         '& .nav-label': {
@@ -75,7 +79,7 @@ const NavIconBtn = ({ icon, label, onClick, href, iconColor, isDark, sx = {} }) 
             fontFamily: 'Inter, sans-serif',
             fontWeight: 600,
             fontSize: '0.82rem',
-            letterSpacing: '-0.01em',
+            letterSpacing: 0,
             marginLeft: 0,
             transition: 'max-width 0.3s ease, opacity 0.25s ease, margin-left 0.3s ease',
           }}
@@ -112,7 +116,7 @@ const Navbar = () => {
   const { isDark } = useSelector((state) => state.theme);
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { query } = useSelector((state) => state.search);
-  const [searchInput, setSearchInput] = useState(query);
+  const [searchInput, setSearchInput] = useState(() => query);
   const [tagCount, setTagCount] = useState(0);
 
   // Fetch tag count whenever pathname changes (ensuring it's fresh)
@@ -128,15 +132,9 @@ const Navbar = () => {
     fetchTagCount();
   }, [location.pathname]);
 
-  // Sync search input when search query changes globally (e.g. cleared on home page)
-  useEffect(() => {
-    setSearchInput(query);
-  }, [query]);
-
-  // Sync search input if location changes and query is empty
+  // Clear global search state when leaving the search route.
   useEffect(() => {
     if (location.pathname !== '/search') {
-      setSearchInput('');
       dispatch(setSearchQuery(''));
     }
   }, [location.pathname, dispatch]);
@@ -190,11 +188,13 @@ const Navbar = () => {
               fontWeight: 800,
               textDecoration: 'none',
               color: 'primary.main',
-              letterSpacing: '-0.5px',
+              letterSpacing: 0,
               fontFamily: 'Outfit, Inter, sans-serif',
               display: 'flex',
               alignItems: 'center',
-              fontSize: { xs: '1.25rem', sm: '1.5rem' }
+              fontSize: { xs: '1.25rem', sm: '1.5rem' },
+              flexShrink: 0,
+              width: { xs: 74, sm: 150 },
             }}
           >
             <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
@@ -212,10 +212,10 @@ const Navbar = () => {
               display: 'flex',
               alignItems: 'center',
               backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)',
-              borderRadius: '999px',
+              borderRadius: '6px',
               px: { xs: 1.5, sm: 2.5 },
               py: 0.5,
-              flexGrow: 1,
+              flex: '1 1 auto',
               maxWidth: { xs: '160px', sm: '320px', md: '380px' },
               mx: { xs: 1, sm: 2 },
               border: '1.5px solid transparent',
@@ -243,7 +243,16 @@ const Navbar = () => {
           </Box>
 
           {/* Controls */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 0.75 } }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              gap: { xs: 0.5, sm: 0.75 },
+              flexShrink: 0,
+              width: { xs: 'auto', sm: isAuthenticated ? 286 : 226 },
+            }}
+          >
 
             {/* 태그 목록 */}
             <NavIconBtn

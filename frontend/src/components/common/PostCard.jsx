@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import TagBadge from './TagBadge';

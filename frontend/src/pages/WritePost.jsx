@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import client from '../api/client';
 import MarkdownEditor from '../components/editor/MarkdownEditor';
@@ -12,16 +12,8 @@ const WritePost = () => {
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [hasDraft, setHasDraft] = useState(false);
+  const [hasDraft, setHasDraft] = useState(() => !!localStorage.getItem(DRAFT_KEY));
   const [error, setError] = useState('');
-
-  // Check for existing drafts on mount
-  useEffect(() => {
-    const savedDraft = localStorage.getItem(DRAFT_KEY);
-    if (savedDraft) {
-      setHasDraft(true);
-    }
-  }, []);
 
   // Autosave draft to localstorage (debounced)
   useEffect(() => {
@@ -102,10 +94,10 @@ const WritePost = () => {
       {hasDraft && (
         <Alert 
           severity="info" 
-          sx={{ mb: 3, borderRadius: '12px' }}
+          sx={{ mb: 3, borderRadius: '6px' }}
           action={
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button color="primary" size="small" variant="contained" onClick={loadDraft} sx={{ borderRadius: '999px' }}>
+              <Button color="primary" size="small" variant="contained" onClick={loadDraft} sx={{ borderRadius: '6px' }}>
                 불러오기
               </Button>
               <Button color="inherit" size="small" onClick={discardDraft}>
@@ -119,7 +111,7 @@ const WritePost = () => {
       )}
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3, borderRadius: '12px' }}>
+        <Alert severity="error" sx={{ mb: 3, borderRadius: '6px' }}>
           {error}
         </Alert>
       )}

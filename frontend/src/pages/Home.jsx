@@ -1,21 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Box, Typography, Button } from '@mui/material';
+import { Container, Box, Typography, Button, Pagination } from '@mui/material';
 import client from '../api/client';
 import PostCard from '../components/common/PostCard';
 import EmptyState from '../components/common/EmptyState';
 import SkeletonList from '../components/common/SkeletonList';
+import ListControls from '../components/common/ListControls';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const postsRes = await client.get('/posts');
-        setPosts(postsRes.data);
+        const params = new URLSearchParams({
+          page: String(page),
+          limit: String(limit),
+        });
+        if (dateFrom) params.set('from', dateFrom);
+        if (dateTo) params.set('to', dateTo);
+
+        const postsRes = await client.get(`/posts?${params.toString()}`);
+        setPosts(postsRes.data.posts || postsRes.data);
+        setTotalCount(postsRes.data.totalCount ?? postsRes.data.length);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
       } finally {
@@ -24,7 +38,24 @@ const Home = () => {
     };
 
     fetchData();
-  }, []);
+  }, [page, limit, dateFrom, dateTo]);
+
+  const totalPages = Math.ceil(totalCount / limit);
+
+  const handleLimitChange = (value) => {
+    setLimit(value);
+    setPage(1);
+  };
+
+  const handleDateFromChange = (value) => {
+    setDateFrom(value);
+    setPage(1);
+  };
+
+  const handleDateToChange = (value) => {
+    setDateTo(value);
+    setPage(1);
+  };
 
   return (
     <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
@@ -51,7 +82,7 @@ const Home = () => {
           to="/posts/all"
           variant="outlined"
           sx={{ 
-            borderRadius: '999px', 
+            borderRadius: '6px',
             px: { xs: 2, sm: 3 }, 
             py: { xs: 0.5, sm: 1 }, 
             fontSize: { xs: '0.75rem', sm: '0.85rem' }, 
@@ -67,12 +98,35 @@ const Home = () => {
 
       {/* Full-width Posts List */}
       <Box>
+        <ListControls
+          totalCount={totalCount}
+          limit={limit}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          onLimitChange={handleLimitChange}
+          onDateFromChange={handleDateFromChange}
+          onDateToChange={handleDateToChange}
+        />
+
         {loading ? (
           <SkeletonList count={3} />
         ) : posts.length > 0 ? (
-          posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))
+          <>
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+
+            {totalPages > 1 && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+                <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={(event, value) => setPage(value)}
+                  color="primary"
+                />
+              </Box>
+            )}
+          </>
         ) : (
           <EmptyState 
             title="작성된 글이 없습니다" 

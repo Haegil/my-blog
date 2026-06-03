@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure, clearError } from '../store/authSlice';
@@ -64,7 +64,7 @@ const Login = () => {
           </Box>
 
           {(localError || error) && (
-            <Alert severity="error" sx={{ mb: 3, borderRadius: '12px' }}>
+            <Alert severity="error" sx={{ mb: 3, borderRadius: '6px' }}>
               {localError || error}
             </Alert>
           )}

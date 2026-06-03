@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Card, CardContent, Typography, Box, Button, Pagination, Divider } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
@@ -6,21 +6,31 @@ import client from '../api/client';
 import PostCard from '../components/common/PostCard';
 import EmptyState from '../components/common/EmptyState';
 import SkeletonList from '../components/common/SkeletonList';
+import ListControls from '../components/common/ListControls';
 
 const AllPosts = () => {
   const [posts, setPosts] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [tagsCount, setTagsCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [loading, setLoading] = useState(true);
-  const limit = 10;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        const params = new URLSearchParams({
+          page: String(page),
+          limit: String(limit),
+        });
+        if (dateFrom) params.set('from', dateFrom);
+        if (dateTo) params.set('to', dateTo);
+
         const [postsRes, tagsRes] = await Promise.all([
-          client.get(`/posts?page=${page}&limit=${limit}`),
+          client.get(`/posts?${params.toString()}`),
           client.get('/tags')
         ]);
         
@@ -42,7 +52,7 @@ const AllPosts = () => {
     };
 
     fetchData();
-  }, [page]);
+  }, [page, limit, dateFrom, dateTo]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -50,6 +60,21 @@ const AllPosts = () => {
   };
 
   const totalPages = Math.ceil(totalCount / limit);
+
+  const handleLimitChange = (value) => {
+    setLimit(value);
+    setPage(1);
+  };
+
+  const handleDateFromChange = (value) => {
+    setDateFrom(value);
+    setPage(1);
+  };
+
+  const handleDateToChange = (value) => {
+    setDateTo(value);
+    setPage(1);
+  };
 
   return (
     <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
@@ -71,7 +96,7 @@ const AllPosts = () => {
           borderColor: 'primary.main',
           borderWidth: '1px',
           borderStyle: 'solid',
-          borderRadius: '16px'
+          borderRadius: '6px'
         }}
       >
         <CardContent sx={{ p: { xs: 2.5, sm: 4 }, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 3 }}>
@@ -119,6 +144,16 @@ const AllPosts = () => {
       </Box>
 
       <Divider sx={{ mb: 4 }} />
+
+      <ListControls
+        totalCount={totalCount}
+        limit={limit}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        onLimitChange={handleLimitChange}
+        onDateFromChange={handleDateFromChange}
+        onDateToChange={handleDateToChange}
+      />
 
       {/* List */}
       {loading ? (

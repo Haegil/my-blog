@@ -34,14 +34,14 @@ export const getMuiTheme = (isDark) => {
       },
     },
     shape: {
-      borderRadius: 16,
+      borderRadius: 6,
     },
     components: {
       MuiButton: {
         styleOverrides: {
           root: {
-            borderRadius: '999px', // MD3 pill buttons
-            padding: '10px 24px',
+            borderRadius: '6px',
+            padding: '9px 18px',
             fontSize: '0.95rem',
             boxShadow: 'none',
             textTransform: 'none',
@@ -82,7 +82,7 @@ export const getMuiTheme = (isDark) => {
       MuiCard: {
         styleOverrides: {
           root: {
-            borderRadius: 24, // Matches example theme.html rounded styling
+            borderRadius: 6,
             border: `1px solid ${isDark ? '#374151' : '#D6E2DA'}`,
             boxShadow: isDark ? 'none' : '0 8px 24px rgba(0, 0, 0, 0.04)',
             backgroundImage: 'none',

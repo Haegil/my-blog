@@ -1,50 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { 
-  Container, 
-  Grid, 
-  Box, 
-  Typography, 
-  Card, 
-  CardContent, 
-  Button, 
-  Divider, 
-  List, 
-  ListItemButton, 
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Divider,
+  Grid,
+  List,
+  ListItemButton,
   ListItemText,
-  Chip
+  Pagination,
+  Typography,
 } from '@mui/material';
 import { ArrowBack, Tag as TagIcon } from '@mui/icons-material';
 import client from '../api/client';
-import PostCard from '../components/common/PostCard';
 import EmptyState from '../components/common/EmptyState';
+import ListControls from '../components/common/ListControls';
+import PostCard from '../components/common/PostCard';
 import SkeletonList from '../components/common/SkeletonList';
 
 const Tags = () => {
   const { name } = useParams();
   const navigate = useNavigate();
-  
+
   const [tags, setTags] = useState([]);
   const [posts, setPosts] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [loadingTags, setLoadingTags] = useState(true);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [error, setError] = useState('');
 
-  // Fetch all tags on load
   useEffect(() => {
     const fetchTags = async () => {
       try {
         setLoadingTags(true);
+        setError('');
         const response = await client.get('/tags');
         setTags(response.data);
-        
-        // If we are at /tags and there are tags available, redirect to the first tag
-        if (!name && response.data && response.data.length > 0) {
+
+        if (!name && response.data.length > 0) {
           navigate(`/tags/${encodeURIComponent(response.data[0].name)}`, { replace: true });
         }
       } catch (err) {
         console.error('Error fetching tags:', err);
-        setError('태그 목록을 불러오는 도중 오류가 발생했습니다.');
+        setError('태그 목록을 불러오는 중 오류가 발생했습니다.');
       } finally {
         setLoadingTags(false);
       }
@@ -53,102 +60,125 @@ const Tags = () => {
     fetchTags();
   }, [name, navigate]);
 
-  // Fetch posts for the active tag
   useEffect(() => {
     if (!name) return;
 
     const fetchPosts = async () => {
       try {
         setLoadingPosts(true);
-        const response = await client.get(`/posts?tag=${encodeURIComponent(name)}`);
-        setPosts(response.data);
+        const params = new URLSearchParams({
+          tag: name,
+          page: String(page),
+          limit: String(limit),
+        });
+        if (dateFrom) params.set('from', dateFrom);
+        if (dateTo) params.set('to', dateTo);
+
+        const response = await client.get(`/posts?${params.toString()}`);
+        setPosts(response.data.posts || response.data);
+        setTotalCount(response.data.totalCount ?? response.data.length);
       } catch (err) {
         console.error('Error fetching posts for tag:', err);
+        setError('태그별 게시글을 불러오는 중 오류가 발생했습니다.');
       } finally {
         setLoadingPosts(false);
       }
     };
 
     fetchPosts();
-  }, [name]);
+  }, [name, page, limit, dateFrom, dateTo]);
 
   const activeTagName = name || (tags.length > 0 ? tags[0].name : '');
+  const totalPages = Math.ceil(totalCount / limit);
+
+  const resetPage = () => setPage(1);
+
+  const handleLimitChange = (value) => {
+    setLimit(value);
+    resetPage();
+  };
+
+  const handleDateFromChange = (value) => {
+    setDateFrom(value);
+    resetPage();
+  };
+
+  const handleDateToChange = (value) => {
+    setDateTo(value);
+    resetPage();
+  };
 
   return (
     <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
-      {/* Back Button */}
-      <Button 
-        component={Link} 
-        to="/" 
-        startIcon={<ArrowBack />} 
+      <Button
+        component={Link}
+        to="/"
+        startIcon={<ArrowBack />}
         sx={{ mb: { xs: 2, md: 4 }, color: 'text.secondary', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
       >
         홈으로 돌아가기
       </Button>
 
-      {/* Header */}
       <Box sx={{ mb: { xs: 3, md: 5 } }}>
-        <Typography 
-          variant="h4" 
-          sx={{ 
-            fontSize: { xs: '1.6rem', sm: '2.125rem' }, 
-            fontWeight: 800, 
-            mb: 0.5, 
-            fontFamily: 'Outfit, sans-serif' 
+        <Typography
+          variant="h4"
+          sx={{
+            fontSize: { xs: '1.6rem', sm: '2.125rem' },
+            fontWeight: 800,
+            mb: 0.5,
+            fontFamily: 'Outfit, sans-serif',
           }}
         >
-          태그별 기록 탐색 🏷️
+          태그별 기록 탐색
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
-          관심 있는 태그를 선택하여 관련 지식과 경험들을 모아보세요.
+          관심 있는 태그를 선택해 관련 기록을 모아볼 수 있습니다.
         </Typography>
       </Box>
 
       <Divider sx={{ mb: 5 }} />
 
+      {error && (
+        <Alert severity="error" sx={{ mb: 3, borderRadius: '6px' }}>
+          {error}
+        </Alert>
+      )}
+
       <Grid container spacing={4}>
-        {/* Left Column: Tags List */}
         <Grid item xs={12} md={4}>
-          <Card 
-            sx={{ 
-              position: { md: 'sticky' }, 
-              top: 96, 
-              maxHeight: { xs: '200px', md: 'calc(100vh - 160px)' }, 
-              overflowY: 'auto' 
+          <Card
+            sx={{
+              position: { md: 'sticky' },
+              top: 96,
+              maxHeight: { xs: '200px', md: 'calc(100vh - 160px)' },
+              overflowY: 'auto',
             }}
           >
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  fontWeight: 700, 
-                  mb: 1.5, 
-                  fontFamily: 'Outfit, sans-serif', 
-                  display: 'flex', 
-                  alignItems: 'center', 
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  mb: 1.5,
+                  fontFamily: 'Outfit, sans-serif',
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: 1,
-                  fontSize: { xs: '0.95rem', sm: '1.1rem' }
+                  fontSize: { xs: '0.95rem', sm: '1.1rem' },
                 }}
               >
                 <TagIcon fontSize="small" color="primary" /> 모든 태그 ({tags.length})
               </Typography>
-              
+
               {loadingTags ? (
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  <Chip label="Loading..." size="small" disabled sx={{ borderRadius: '8px' }} />
-                  <Chip label="Loading..." size="small" disabled sx={{ borderRadius: '8px' }} />
-                  <Chip label="Loading..." size="small" disabled sx={{ borderRadius: '8px' }} />
+                  <Chip label="Loading..." size="small" disabled sx={{ borderRadius: '6px' }} />
+                  <Chip label="Loading..." size="small" disabled sx={{ borderRadius: '6px' }} />
+                  <Chip label="Loading..." size="small" disabled sx={{ borderRadius: '6px' }} />
                 </Box>
               ) : tags.length > 0 ? (
                 <>
-                  {/* Mobile View: 2-column grid to fill width and reduce whitespace */}
-                  <Box 
-                    sx={{ 
-                      display: { xs: 'grid', md: 'none' }, 
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: 0.5,
-                    }}
-                  >
+                  <Box sx={{ display: { xs: 'grid', md: 'none' }, gridTemplateColumns: '1fr 1fr', gap: 0.5 }}>
                     {tags.map((tag) => {
                       const isActive = tag.name.toLowerCase() === activeTagName.toLowerCase();
                       return (
@@ -158,33 +188,28 @@ const Tags = () => {
                           component={Link}
                           to={`/tags/${encodeURIComponent(tag.name)}`}
                           clickable
-                          color={isActive ? "primary" : "default"}
-                          variant={isActive ? "filled" : "outlined"}
+                          color={isActive ? 'primary' : 'default'}
+                          variant={isActive ? 'filled' : 'outlined'}
                           sx={{
                             fontFamily: 'Inter, sans-serif',
                             fontWeight: isActive ? 700 : 500,
                             fontSize: '0.75rem',
-                            borderRadius: '8px',
+                            borderRadius: '6px',
                             height: '28px',
                             width: '100%',
                             borderColor: isActive ? 'transparent' : 'divider',
-                            transition: 'all 0.2s ease',
                             '& .MuiChip-label': {
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
                               px: 1,
                             },
-                            '&:hover': {
-                              backgroundColor: isActive ? 'primary.main' : 'rgba(95, 141, 122, 0.08)',
-                            }
                           }}
                         />
                       );
                     })}
                   </Box>
 
-                  {/* Desktop View: List panel */}
                   <List component="nav" sx={{ display: { xs: 'none', md: 'block' }, p: 0 }}>
                     {tags.map((tag) => {
                       const isActive = tag.name.toLowerCase() === activeTagName.toLowerCase();
@@ -195,48 +220,31 @@ const Tags = () => {
                           to={`/tags/${encodeURIComponent(tag.name)}`}
                           selected={isActive}
                           sx={{
-                            borderRadius: '12px',
+                            borderRadius: '6px',
                             mb: 1,
-                            transition: 'all 0.2s ease',
-                            py: 1.5,
-                            px: 2,
+                            py: 1.25,
+                            px: 1.5,
                             '&.Mui-selected': {
                               backgroundColor: 'primary.main',
                               color: '#ffffff',
-                              '&:hover': {
-                                backgroundColor: 'primary.dark',
-                              },
+                              '&:hover': { backgroundColor: 'primary.dark' },
                               '& .MuiChip-root': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                                 color: '#ffffff',
-                                borderColor: 'transparent'
-                              }
+                                borderColor: 'transparent',
+                              },
                             },
-                            '&:hover': {
-                              transform: 'translateX(4px)',
-                              backgroundColor: isActive ? 'primary.main' : 'rgba(95, 141, 122, 0.08)',
-                            }
                           }}
                         >
-                          <ListItemText 
-                            primary={`#${tag.name}`} 
-                            primaryTypographyProps={{ 
+                          <ListItemText
+                            primary={`#${tag.name}`}
+                            primaryTypographyProps={{
                               fontWeight: isActive ? 700 : 500,
                               fontFamily: 'Inter, sans-serif',
-                              fontSize: '0.95rem'
-                            }} 
+                              fontSize: '0.95rem',
+                            }}
                           />
-                          <Chip 
-                            label={tag.count} 
-                            size="small" 
-                            variant="outlined"
-                            sx={{ 
-                              fontWeight: 600, 
-                              fontSize: '0.75rem',
-                              borderColor: isActive ? 'transparent' : 'divider',
-                              color: isActive ? 'inherit' : 'text.secondary'
-                            }} 
-                          />
+                          <Chip label={tag.count} size="small" variant="outlined" />
                         </ListItemButton>
                       );
                     })}
@@ -251,47 +259,56 @@ const Tags = () => {
           </Card>
         </Grid>
 
-          {/* Right Column: Selected Tag's Posts */}
         <Grid item xs={12} md={8}>
           {activeTagName ? (
             <Box sx={{ mt: { xs: 1, md: 0 } }}>
-              <Box sx={{ mb: { xs: 2, sm: 4 }, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography 
-                    variant="h5" 
-                    sx={{ 
-                      fontWeight: 800, 
-                      mb: 0.5, 
-                      fontFamily: 'Outfit, sans-serif',
-                      fontSize: { xs: '1.25rem', sm: '1.5rem' }
-                    }}
-                  >
-                    #{activeTagName}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
-                    이 태그가 포함된 기록들입니다. 총 {loadingPosts ? '-' : posts.length}개의 글이 검색되었습니다.
-                  </Typography>
-                </Box>
+              <Box sx={{ mb: { xs: 2, sm: 4 } }}>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 800,
+                    mb: 0.5,
+                    fontFamily: 'Outfit, sans-serif',
+                    fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                  }}
+                >
+                  #{activeTagName}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
+                  선택한 태그가 포함된 기록입니다.
+                </Typography>
               </Box>
+
+              <ListControls
+                totalCount={totalCount}
+                limit={limit}
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+                onLimitChange={handleLimitChange}
+                onDateFromChange={handleDateFromChange}
+                onDateToChange={handleDateToChange}
+              />
 
               {loadingPosts ? (
                 <SkeletonList count={3} />
               ) : posts.length > 0 ? (
-                posts.map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))
+                <>
+                  {posts.map((post) => (
+                    <PostCard key={post.id} post={post} />
+                  ))}
+
+                  {totalPages > 1 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+                      <Pagination count={totalPages} page={page} onChange={(event, value) => setPage(value)} color="primary" />
+                    </Box>
+                  )}
+                </>
               ) : (
-                <EmptyState 
-                  title="게시글이 없습니다" 
-                  description={`#${activeTagName} 태그를 가진 게시글이 아직 없습니다.`} 
-                />
+                <EmptyState title="게시글이 없습니다" description={`#${activeTagName} 태그를 가진 게시글이 아직 없습니다.`} />
               )}
             </Box>
           ) : (
-            <EmptyState 
-              title="태그를 선택하세요" 
-              description="왼쪽 목록에서 태그를 선택하면 해당 태그를 가진 게시글들이 여기에 나타납니다." 
-            />
+            <EmptyState title="태그를 선택하세요" description="왼쪽 목록에서 태그를 선택하면 해당 태그를 가진 게시글이 표시됩니다." />
           )}
         </Grid>
       </Grid>

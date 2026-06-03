@@ -12,8 +12,8 @@ class PostService {
     return { ...post, tags };
   }
 
-  async getAllPosts(searchQuery, tagName, page = null, limit = null) {
-    const posts = await postRepository.findAll(searchQuery, tagName, page, limit);
+  async getAllPosts(searchQuery, tagName, page = null, limit = null, dateRange = {}) {
+    const posts = await postRepository.findAll(searchQuery, tagName, page, limit, dateRange);
     if (posts.length === 0) {
       return page !== null ? { posts: [], totalCount: 0 } : [];
     }
@@ -27,7 +27,7 @@ class PostService {
     );
 
     if (page !== null) {
-      const totalCount = await postRepository.countAll(searchQuery, tagName);
+      const totalCount = await postRepository.countAll(searchQuery, tagName, dateRange);
       return { posts: postsWithTags, totalCount };
     }
 

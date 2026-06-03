@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Container, Box, Typography, Button, Divider, Pagination } from '@mui/material';
@@ -6,6 +6,7 @@ import { ArrowBack } from '@mui/icons-material';
 import client from '../api/client';
 import PostCard from '../components/common/PostCard';
 import EmptyState from '../components/common/EmptyState';
+import ListControls from '../components/common/ListControls';
 import SkeletonList from '../components/common/SkeletonList';
 import { setSearchQuery } from '../store/searchSlice';
 
@@ -16,25 +17,36 @@ const SearchResults = () => {
   
   const [posts, setPosts] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [limit, setLimit] = useState(10);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [pageState, setPageState] = useState({ key: query, page: 1 });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const limit = 5;
-
-  // Reset page to 1 whenever search query changes
-  useEffect(() => {
-    setPage(1);
-  }, [query]);
+  const filterKey = `${query}|${limit}|${dateFrom}|${dateTo}`;
+  const page = pageState.key === filterKey ? pageState.page : 1;
 
   useEffect(() => {
     // Sync the Redux global query with the URL parameter
     dispatch(setSearchQuery(query));
 
+    if (!query) {
+      return;
+    }
+
     const fetchSearchResults = async () => {
       try {
         setLoading(true);
         setError('');
-        const response = await client.get(`/posts?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+        const params = new URLSearchParams({
+          q: query,
+          page: String(page),
+          limit: String(limit),
+        });
+        if (dateFrom) params.set('from', dateFrom);
+        if (dateTo) params.set('to', dateTo);
+
+        const response = await client.get(`/posts?${params.toString()}`);
         
         // Handle both paginated format {posts, totalCount} and plain array
         if (response.data && response.data.posts) {
@@ -52,18 +64,31 @@ const SearchResults = () => {
       }
     };
 
-    if (query) {
-      fetchSearchResults();
-    } else {
-      setPosts([]);
-      setTotalCount(0);
-      setLoading(false);
-    }
-  }, [query, page, dispatch]);
+    fetchSearchResults();
+  }, [query, page, limit, dateFrom, dateTo, dispatch]);
 
   const handlePageChange = (event, value) => {
-    setPage(value);
+    setPageState({ key: filterKey, page: value });
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const resetPage = () => {
+    setPageState({ key: filterKey, page: 1 });
+  };
+
+  const handleLimitChange = (value) => {
+    setLimit(value);
+    resetPage();
+  };
+
+  const handleDateFromChange = (value) => {
+    setDateFrom(value);
+    resetPage();
+  };
+
+  const handleDateToChange = (value) => {
+    setDateTo(value);
+    resetPage();
   };
 
   const totalPages = Math.ceil(totalCount / limit);
@@ -107,6 +132,16 @@ const SearchResults = () => {
       </Box>
 
       <Divider sx={{ mb: 4 }} />
+
+      <ListControls
+        totalCount={totalCount}
+        limit={limit}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        onLimitChange={handleLimitChange}
+        onDateFromChange={handleDateFromChange}
+        onDateToChange={handleDateToChange}
+      />
 
       {/* Content */}
       {loading ? (

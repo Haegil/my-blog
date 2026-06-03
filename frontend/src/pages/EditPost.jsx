@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import client from '../api/client';
 import MarkdownEditor from '../components/editor/MarkdownEditor';
@@ -118,7 +118,7 @@ const EditPost = () => {
     return (
       <Container maxWidth="md" sx={{ py: 6 }}>
         <Skeleton variant="text" width={200} height={40} sx={{ mb: 2 }} />
-        <Skeleton variant="rectangular" width="100%" height={400} sx={{ borderRadius: '16px' }} />
+        <Skeleton variant="rectangular" width="100%" height={400} sx={{ borderRadius: '6px' }} />
       </Container>
     );
   }
@@ -137,7 +137,7 @@ const EditPost = () => {
         <Button 
           variant="outlined" 
           onClick={() => navigate(`/posts/${id}`)}
-          sx={{ borderRadius: '999px' }}
+          sx={{ borderRadius: '6px' }}
         >
           수정 취소
         </Button>
@@ -147,10 +147,10 @@ const EditPost = () => {
       {hasDraft && (
         <Alert 
           severity="info" 
-          sx={{ mb: 3, borderRadius: '12px' }}
+          sx={{ mb: 3, borderRadius: '6px' }}
           action={
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button color="primary" size="small" variant="contained" onClick={loadDraft} sx={{ borderRadius: '999px' }}>
+              <Button color="primary" size="small" variant="contained" onClick={loadDraft} sx={{ borderRadius: '6px' }}>
                 불러오기
               </Button>
               <Button color="inherit" size="small" onClick={discardDraft}>
@@ -164,7 +164,7 @@ const EditPost = () => {
       )}
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3, borderRadius: '12px' }}>
+        <Alert severity="error" sx={{ mb: 3, borderRadius: '6px' }}>
           {error}
         </Alert>
       )}

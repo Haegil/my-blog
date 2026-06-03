@@ -1,15 +1,41 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ThemeProvider, CssBaseline, Box } from '@mui/material';
 import { getMuiTheme } from './styles/theme';
+import client from './api/client';
+import { authCheckComplete, authCheckStart } from './store/authSlice';
 import AppRouter from './router/AppRouter';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
 function App() {
+  const dispatch = useDispatch();
   const { isDark } = useSelector((state) => state.theme);
   const muiTheme = getMuiTheme(isDark);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const verifySession = async () => {
+      dispatch(authCheckStart());
+      try {
+        const response = await client.get('/auth/check');
+        if (!mounted) return;
+        dispatch(authCheckComplete(response.data.authenticated ? response.data.user : null));
+      } catch {
+        if (mounted) {
+          dispatch(authCheckComplete(null));
+        }
+      }
+    };
+
+    verifySession();
+
+    return () => {
+      mounted = false;
+    };
+  }, [dispatch]);
 
   // Sync dark mode class with <html> element for Tailwind CSS v4 support
   useEffect(() => {

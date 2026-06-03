@@ -10,7 +10,7 @@ const postSchema = z.object({
 class PostController {
   async getAllPosts(req, res) {
     try {
-      let { q, tag, page, limit } = req.query;
+      let { q, tag, page, limit, from, to } = req.query;
 
       // Handle '#' signature for tag search
       if (q && q.trim().startsWith('#')) {
@@ -31,7 +31,13 @@ class PostController {
         parsedLimit = 5; // default limit to 5 if page is specified but limit isn't
       }
 
-      const result = await postService.getAllPosts(q, tag, parsedPage, parsedLimit);
+      const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+      const dateRange = {
+        from: from && datePattern.test(from) ? from : null,
+        to: to && datePattern.test(to) ? to : null,
+      };
+
+      const result = await postService.getAllPosts(q, tag, parsedPage, parsedLimit, dateRange);
       return res.status(200).json(result);
     } catch (err) {
       console.error('Get all posts error:', err);

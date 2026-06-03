@@ -66,14 +66,8 @@ class PostRepository {
     }
   }
 
-  async findAll(searchQuery = null, tagName = null, page = null, limit = null) {
-    let sql = `
-      SELECT p.id, p.title, p.content, p.created_at, p.updated_at
-      FROM posts p
-    `;
-    const params = [];
-    let paramIndex = 1;
-    const whereClauses = [];
+  applyFilters(whereClauses, params, startIndex, searchQuery = null, tagName = null, dateRange = {}) {
+    let paramIndex = startIndex;
 
     if (tagName) {
       whereClauses.push(`EXISTS (
@@ -90,6 +84,28 @@ class PostRepository {
       paramIndex++;
       params.push(`%${searchQuery.toLowerCase()}%`);
     }
+
+    if (dateRange.from) {
+      whereClauses.push(`p.created_at >= $${paramIndex++}::date`);
+      params.push(dateRange.from);
+    }
+
+    if (dateRange.to) {
+      whereClauses.push(`p.created_at < ($${paramIndex++}::date + INTERVAL '1 day')`);
+      params.push(dateRange.to);
+    }
+
+    return paramIndex;
+  }
+
+  async findAll(searchQuery = null, tagName = null, page = null, limit = null, dateRange = {}) {
+    let sql = `
+      SELECT p.id, p.title, p.content, p.created_at, p.updated_at
+      FROM posts p
+    `;
+    const params = [];
+    const whereClauses = [];
+    let paramIndex = this.applyFilters(whereClauses, params, 1, searchQuery, tagName, dateRange);
 
     if (whereClauses.length > 0) {
       sql += ` WHERE ` + whereClauses.join(' AND ');
@@ -113,30 +129,14 @@ class PostRepository {
     }));
   }
 
-  async countAll(searchQuery = null, tagName = null) {
+  async countAll(searchQuery = null, tagName = null, dateRange = {}) {
     let sql = `
       SELECT COUNT(*) AS total
       FROM posts p
     `;
     const params = [];
-    let paramIndex = 1;
     const whereClauses = [];
-
-    if (tagName) {
-      whereClauses.push(`EXISTS (
-        SELECT 1 
-        FROM post_tags pt
-        JOIN tags t ON pt.tag_id = t.id
-        WHERE pt.post_id = p.id AND t.name = $${paramIndex++}
-      )`);
-      params.push(tagName);
-    }
-
-    if (searchQuery) {
-      whereClauses.push(`(LOWER(p.title) LIKE $${paramIndex} OR LOWER(p.content) LIKE $${paramIndex})`);
-      paramIndex++;
-      params.push(`%${searchQuery.toLowerCase()}%`);
-    }
+    this.applyFilters(whereClauses, params, 1, searchQuery, tagName, dateRange);
 
     if (whereClauses.length > 0) {
       sql += ` WHERE ` + whereClauses.join(' AND ');

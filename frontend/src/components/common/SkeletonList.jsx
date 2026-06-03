@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, CardContent, Skeleton, Box } from '@mui/material';
 
 const SkeletonList = ({ count = 3 }) => {

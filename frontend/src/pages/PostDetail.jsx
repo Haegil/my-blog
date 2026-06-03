@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import client from '../api/client';
@@ -74,7 +74,7 @@ const PostDetail = () => {
         <Skeleton variant="text" width="90%" height={50} sx={{ mb: 3 }} />
         <Skeleton variant="text" width={120} height={24} sx={{ mb: 4 }} />
         <Divider sx={{ mb: 4 }} />
-        <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: '16px' }} />
+        <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: '6px' }} />
       </Container>
     );
   }
@@ -110,7 +110,7 @@ const PostDetail = () => {
                   variant="outlined" 
                   size="small" 
                   startIcon={<Edit />}
-                  sx={{ borderRadius: '999px' }}
+                  sx={{ borderRadius: '6px' }}
                 >
                   수정
                 </Button>
@@ -120,7 +120,7 @@ const PostDetail = () => {
                   size="small" 
                   startIcon={<Delete />}
                   onClick={() => setDeleteDialogOpen(true)}
-                  sx={{ borderRadius: '999px' }}
+                  sx={{ borderRadius: '6px' }}
                 >
                   삭제
                 </Button>
@@ -154,7 +154,7 @@ const PostDetail = () => {
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         PaperProps={{
-          style: { borderRadius: 16 }
+          style: { borderRadius: 6 }
         }}
       >
         <DialogTitle sx={{ fontWeight: 700 }}>기록 삭제</DialogTitle>
@@ -165,7 +165,7 @@ const PostDetail = () => {
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5 }}>
           <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
-          <Button onClick={handleDelete} color="error" variant="contained" autoFocus sx={{ borderRadius: '999px' }}>
+          <Button onClick={handleDelete} color="error" variant="contained" autoFocus sx={{ borderRadius: '6px' }}>
             삭제하기
           </Button>
         </DialogActions>
