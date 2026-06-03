@@ -58,9 +58,9 @@ const Home = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
+    <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
       {/* Title Header */}
-      <Box sx={{ mb: { xs: 3, md: 5 }, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ mb: { xs: 3, md: 4 }, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
           <Typography 
             variant="h4" 

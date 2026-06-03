@@ -14,15 +14,14 @@ const TagBadge = ({ name, count }) => {
       color="primary"
       size="small"
       sx={{
-        borderRadius: '8px',
+        borderRadius: '4px',
         fontWeight: 600,
         fontSize: '0.8rem',
         textDecoration: 'none',
         height: '28px',
-        transition: 'all 0.2s ease',
+        transition: 'background-color 0.2s ease, border-color 0.2s ease',
         '&:hover': {
-          transform: 'translateY(-1px)',
-          boxShadow: '0 2px 6px rgba(95, 141, 122, 0.15)',
+          backgroundColor: 'rgba(95, 141, 122, 0.08)',
         }
       }}
     />

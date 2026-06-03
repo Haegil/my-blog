@@ -109,7 +109,7 @@ const Tags = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
+    <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
       <Button
         component={Link}
         to="/"
@@ -119,7 +119,7 @@ const Tags = () => {
         홈으로 돌아가기
       </Button>
 
-      <Box sx={{ mb: { xs: 3, md: 5 } }}>
+      <Box sx={{ mb: { xs: 3, md: 4 } }}>
         <Typography
           variant="h4"
           sx={{
@@ -136,7 +136,7 @@ const Tags = () => {
         </Typography>
       </Box>
 
-      <Divider sx={{ mb: 5 }} />
+      <Divider sx={{ mb: 4 }} />
 
       {error && (
         <Alert severity="error" sx={{ mb: 3, borderRadius: '6px' }}>

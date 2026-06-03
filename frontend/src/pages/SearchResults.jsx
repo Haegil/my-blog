@@ -94,7 +94,7 @@ const SearchResults = () => {
   const totalPages = Math.ceil(totalCount / limit);
 
   return (
-    <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
+    <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
       {/* Back Button */}
       <Button 
         component={Link} 
@@ -131,7 +131,7 @@ const SearchResults = () => {
         </Typography>
       </Box>
 
-      <Divider sx={{ mb: 4 }} />
+      <Divider sx={{ mb: 3 }} />
 
       <ListControls
         totalCount={totalCount}

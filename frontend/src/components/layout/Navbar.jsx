@@ -167,9 +167,8 @@ const Navbar = () => {
       sx={{
         borderBottom: '1px solid',
         borderColor: 'divider',
-        backgroundColor: isDark ? 'rgba(31, 41, 55, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+        backgroundColor: 'background.paper',
         color: 'text.primary',
-        backdropFilter: 'blur(12px)',
         zIndex: 1100,
       }}
     >

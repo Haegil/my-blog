@@ -41,17 +41,13 @@ export const getMuiTheme = (isDark) => {
         styleOverrides: {
           root: {
             borderRadius: '6px',
-            padding: '9px 18px',
-            fontSize: '0.95rem',
+            padding: '8px 16px',
+            fontSize: '0.9rem',
             boxShadow: 'none',
             textTransform: 'none',
-            transition: 'all 0.2s ease-in-out',
+            transition: 'background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease',
             '&:hover': {
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-              transform: 'translateY(-1px)',
-            },
-            '&:active': {
-              transform: 'translateY(0)',
+              boxShadow: 'none',
             },
           },
           containedPrimary: {
@@ -84,7 +80,7 @@ export const getMuiTheme = (isDark) => {
           root: {
             borderRadius: 6,
             border: `1px solid ${isDark ? '#374151' : '#D6E2DA'}`,
-            boxShadow: isDark ? 'none' : '0 8px 24px rgba(0, 0, 0, 0.04)',
+            boxShadow: 'none',
             backgroundImage: 'none',
           },
         },
@@ -93,7 +89,7 @@ export const getMuiTheme = (isDark) => {
         styleOverrides: {
           root: {
             '& .MuiOutlinedInput-root': {
-              borderRadius: 12,
+              borderRadius: 6,
               '& fieldset': {
                 borderColor: isDark ? '#374151' : '#D6E2DA',
                 borderWidth: '1px',

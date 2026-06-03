@@ -77,7 +77,7 @@ const AllPosts = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
+    <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
       {/* Back Button */}
       <Button 
         component={Link} 
@@ -91,15 +91,15 @@ const AllPosts = () => {
       {/* Stats Card */}
       <Card 
         sx={{ 
-          mb: 5, 
-          background: 'linear-gradient(135deg, rgba(95, 141, 122, 0.06) 0%, rgba(167, 196, 160, 0.06) 100%)', 
+          mb: 4,
+          backgroundColor: 'background.paper',
           borderColor: 'primary.main',
           borderWidth: '1px',
           borderStyle: 'solid',
           borderRadius: '6px'
         }}
       >
-        <CardContent sx={{ p: { xs: 2.5, sm: 4 }, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 3 }}>
+        <CardContent sx={{ p: { xs: 2, sm: 3 }, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 3 }}>
           <Box sx={{ maxWidth: { xs: '100%', sm: '60%' } }}>
             <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, fontFamily: 'Outfit, sans-serif', fontSize: { xs: '0.95rem', sm: '1.25rem' } }}>
               💡 MemoStack Stats
@@ -143,7 +143,7 @@ const AllPosts = () => {
         </Typography>
       </Box>
 
-      <Divider sx={{ mb: 4 }} />
+      <Divider sx={{ mb: 3 }} />
 
       <ListControls
         totalCount={totalCount}

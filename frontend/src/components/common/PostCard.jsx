@@ -16,13 +16,13 @@ const PostCard = ({ post }) => {
   return (
     <Card sx={{ 
       mb: { xs: 2, md: 3 }, 
-      transition: 'all 0.25s ease-in-out',
+      transition: 'border-color 0.2s ease, background-color 0.2s ease',
       '&:hover': {
-        transform: 'translateY(-4px)',
-        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.08)',
+        borderColor: 'primary.main',
+        backgroundColor: 'background.paper',
       }
     }}>
-      <CardContent sx={{ p: { xs: 2.5, sm: 4 }, '&:last-child': { pb: { xs: 2.5, sm: 4 } } }}>
+      <CardContent sx={{ p: { xs: 2, sm: 3 }, '&:last-child': { pb: { xs: 2, sm: 3 } } }}>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontFamily: 'Inter, sans-serif', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
           {formatDate(post.createdAt)}
         </Typography>

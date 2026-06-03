@@ -18,8 +18,8 @@ const ListControls = ({
         alignItems: { xs: 'stretch', sm: 'center' },
         justifyContent: 'space-between',
         flexDirection: { xs: 'column', sm: 'row' },
-        gap: 1.5,
-        mb: 3,
+        gap: 1.25,
+        mb: 2.5,
       }}
     >
       <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
@@ -27,30 +27,26 @@ const ListControls = ({
       </Typography>
 
       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-        <Box sx={{ width: { xs: 'calc(50% - 4px)', sm: 150 } }}>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontWeight: 600 }}>
-            시작일
-          </Typography>
-          <TextField
-            type="date"
-            size="small"
-            value={dateFrom}
-            onChange={(event) => onDateFromChange(event.target.value)}
-            fullWidth
-          />
-        </Box>
-        <Box sx={{ width: { xs: 'calc(50% - 4px)', sm: 150 } }}>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontWeight: 600 }}>
-            종료일
-          </Typography>
-          <TextField
-            type="date"
-            size="small"
-            value={dateTo}
-            onChange={(event) => onDateToChange(event.target.value)}
-            fullWidth
-          />
-        </Box>
+        <TextField
+          label="시작일"
+          type="date"
+          size="small"
+          value={dateFrom}
+          onChange={(event) => onDateFromChange(event.target.value)}
+          InputLabelProps={{ shrink: true }}
+          slotProps={{ inputLabel: { shrink: true } }}
+          sx={{ width: { xs: 'calc(50% - 4px)', sm: 150 } }}
+        />
+        <TextField
+          label="종료일"
+          type="date"
+          size="small"
+          value={dateTo}
+          onChange={(event) => onDateToChange(event.target.value)}
+          InputLabelProps={{ shrink: true }}
+          slotProps={{ inputLabel: { shrink: true } }}
+          sx={{ width: { xs: 'calc(50% - 4px)', sm: 150 } }}
+        />
         <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 120 } }}>
           <InputLabel id="page-size-label">표시 개수</InputLabel>
           <Select

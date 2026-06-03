@@ -45,19 +45,19 @@
 
   /* Custom scrollbar to match theme */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
     background: var(--background);
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 4px;
+    background: #CBD5E1;
+    border-radius: 3px;
     opacity: 0.5;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
+    background: #94A3B8;
   }
 
   /* Custom Markdown Styling */
@@ -111,7 +111,7 @@
     background-color: #1e293b;
     color: #f8fafc;
     padding: 1.25rem;
-    border-radius: 12px;
+    border-radius: 6px;
     overflow-x: auto;
     margin-bottom: 1.25rem;
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -160,7 +160,7 @@
     margin-bottom: 1.5rem;
     font-size: 0.95rem;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 6px;
     border: 1px solid var(--border);
   }
   .markdown-body thead tr {
@@ -302,5 +302,4 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
-
 
