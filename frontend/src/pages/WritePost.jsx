@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import client from '../api/client';
 import MarkdownEditor from '../components/editor/MarkdownEditor';
+import { encodeContentPayload } from '../utils/contentEncoding';
 import { Container, Alert, Button, Box, Typography } from '@mui/material';
 
 const DRAFT_KEY = 'memostack_write_draft';
@@ -65,7 +66,8 @@ const WritePost = () => {
 
       const response = await client.post('/posts', {
         title,
-        content,
+        content: encodeContentPayload(content),
+        contentEncoding: 'base64',
         tags: tagList
       });
 

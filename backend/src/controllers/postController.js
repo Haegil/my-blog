@@ -1,10 +1,12 @@
 const { z } = require('zod');
 const postService = require('../services/postService');
+const { decodePostPayload } = require('../utils/contentDecoder');
 
 const postSchema = z.object({
   title: z.string().min(1, '제목을 입력해주세요.').max(255, '제목은 255자 이하로 작성해주세요.'),
   content: z.string().min(1, '본문 내용을 입력해주세요.'),
   tags: z.array(z.string()).optional().default([]),
+  contentEncoding: z.literal('base64').optional(),
 });
 
 class PostController {
@@ -66,7 +68,8 @@ class PostController {
 
   async createPost(req, res) {
     try {
-      const parseResult = postSchema.safeParse(req.body);
+      const decodedBody = decodePostPayload(req.body);
+      const parseResult = postSchema.safeParse(decodedBody);
       if (!parseResult.success) {
         return res.status(400).json({ 
           message: '입력값을 확인해주세요.', 
@@ -78,6 +81,9 @@ class PostController {
       const postId = await postService.createPost(title, content, tags);
       return res.status(201).json({ message: '게시글이 저장되었습니다.', id: postId });
     } catch (err) {
+      if (err.status === 400) {
+        return res.status(400).json({ message: err.message });
+      }
       console.error('Create post error:', err);
       return res.status(500).json({ message: '게시글을 작성하는 도중 서버 오류가 발생했습니다.' });
     }
@@ -90,7 +96,8 @@ class PostController {
         return res.status(400).json({ message: '올바르지 않은 게시글 ID입니다.' });
       }
 
-      const parseResult = postSchema.safeParse(req.body);
+      const decodedBody = decodePostPayload(req.body);
+      const parseResult = postSchema.safeParse(decodedBody);
       if (!parseResult.success) {
         return res.status(400).json({ 
           message: '입력값을 확인해주세요.', 
@@ -102,6 +109,9 @@ class PostController {
       await postService.updatePost(id, title, content, tags);
       return res.status(200).json({ message: '게시글이 수정되었습니다.', id });
     } catch (err) {
+      if (err.status === 400) {
+        return res.status(400).json({ message: err.message });
+      }
       if (err.status === 404) {
         return res.status(404).json({ message: err.message });
       }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import client from '../api/client';
 import MarkdownEditor from '../components/editor/MarkdownEditor';
+import { encodeContentPayload } from '../utils/contentEncoding';
 import { Container, Alert, Button, Box, Typography, Skeleton } from '@mui/material';
 
 const EditPost = () => {
@@ -100,7 +101,8 @@ const EditPost = () => {
 
       await client.patch(`/posts/${id}`, {
         title,
-        content,
+        content: encodeContentPayload(content),
+        contentEncoding: 'base64',
         tags: tagList
       });
 
